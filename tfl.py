@@ -17,27 +17,27 @@ try:
     OLATA = 0x14
     GPIOA = 0x12
 
-    bus.write_byte_data(DEVICE,IODIRA,0x0)
+    bus.write_byte_data(DEVICE, IODIRA, 0x0)
 
-    bus.write_byte_data(DEVICE,IODIRA,0)
-    bus.write_byte_data(DEVICE,OLATA,0)
+    bus.write_byte_data(DEVICE, IODIRA, 0)
+    bus.write_byte_data(DEVICE, OLATA, 0)
 
     GPIO.setmode(GPIO.BCM)
     GPIO.setwarnings(False)
 
-    #Bakerloo
+    # Bakerloo
     GPIO.setup(4, GPIO.OUT)
     GPIO.setup(17, GPIO.OUT)
 
-    #Central
+    # Central
     GPIO.setup(27, GPIO.OUT)
     GPIO.setup(22, GPIO.OUT)
 
-    #Circle
+    # Circle
     GPIO.setup(18, GPIO.OUT)
     GPIO.setup(23, GPIO.OUT)
 
-    #District
+    # District
     GPIO.setup(24, GPIO.OUT)
     GPIO.setup(25, GPIO.OUT)
 
@@ -45,19 +45,19 @@ try:
     GPIO.setup(8, GPIO.OUT)
     GPIO.setup(7, GPIO.OUT)
 
-    #Jubilee
+    # Jubilee
     GPIO.setup(12, GPIO.OUT)
     GPIO.setup(16, GPIO.OUT)
 
-    #Metropolitan
+    # Metropolitan
     GPIO.setup(20, GPIO.OUT)
     GPIO.setup(21, GPIO.OUT)
 
-    #Northern
+    # Northern
     GPIO.setup(5, GPIO.OUT)
     GPIO.setup(6, GPIO.OUT)
 
-    #Piccadilly
+    # Piccadilly
     GPIO.setup(13, GPIO.OUT)
     GPIO.setup(19, GPIO.OUT)
 
@@ -68,7 +68,7 @@ try:
             bus.write_byte_data(DEVICE, OLATA, 64)
             exit
         return j.json()
-        
+
     class line(object):
 
         def __init__(self, name, lineSeverity, redPin, greenPin):
@@ -150,11 +150,10 @@ try:
         bus.write_byte_data(DEVICE, OLATA, LEDVal)
         time.sleep(300)
 
-except:
+except BaseException:
     e = sys.exc_info()[0]
-    print( "<p>Error: %s</p>" % e )
+    print("<p>Error: %s</p>" % e)
     bus.write_byte_data(DEVICE, OLATA, 64)
 
 finally:
     print("Execution finished")
-
