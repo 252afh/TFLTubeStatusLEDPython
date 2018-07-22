@@ -30,19 +30,19 @@ try:
     GPIOA = 0x12
     GPIOB = 0x13
 
-    bus.write_byte_data(DEVICE, IODIRA, 0x0)
+    bus.write_byte_data(DEVICE, IODIRA, 0x00)
     bus.write_byte_data(DEVICE, IODIRA, 0)
     bus.write_byte_data(DEVICE, OLATA, 0)
 
-    bus.write_byte_data(DEVICE, IODIRB, 0x0)
+    bus.write_byte_data(DEVICE, IODIRB, 0x00)
     bus.write_byte_data(DEVICE, IODIRB, 0)
     bus.write_byte_data(DEVICE, OLATB, 0)
 
-    bus.write_byte_data(SECONDDEVICE, IODIRA, 0x0)
+    bus.write_byte_data(SECONDDEVICE, IODIRA, 0x00)
     bus.write_byte_data(SECONDDEVICE, IODIRA, 0)
     bus.write_byte_data(SECONDDEVICE, OLATA, 0)
 
-    bus.write_byte_data(SECONDDEVICE, IODIRB, 0x0)
+    bus.write_byte_data(SECONDDEVICE, IODIRB, 0x00)
     bus.write_byte_data(SECONDDEVICE, IODIRB, 0)
     bus.write_byte_data(SECONDDEVICE, OLATB, 0)
 
@@ -74,7 +74,7 @@ try:
     Central = line("Central", 0, 18, 23, 24)
     Circle = line("Circle", 0, 22, 25, 8)
     District = line("District", 0, 7, 5, 6)
-    HammersmithCity = line("Hammersmith & City", 0, 13, 19 26)
+    HammersmithCity = line("Hammersmith & City", 0, 13, 19, 26)
     Jubilee = line("Jubilee", 0, 16, 20, 21)
 
     Victoria = line("Victoria", 0, 1, 2, 4)
@@ -185,7 +185,10 @@ except BaseException:
     print("<p>Error: %s</p>" % e)
 
 finally:
-    GPIO.cleanup()
-    bus.write_byte_data(DEVICE, OLATA, 0)
-    bus.write_byte_data(SECONDDEVICE, OLATB, 0)
+    #try:
+        #GPIO.cleanup()
+        #bus.write_byte_data(DEVICE, OLATA, 0)
+        #bus.write_byte_data(SECONDDEVICE, OLATB, 0)
+    #except:
+       # print("Error cleaning up")
     print("Execution finished")
