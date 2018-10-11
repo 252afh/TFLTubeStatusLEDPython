@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, jsonify, current_app
+from flask import Flask, jsonify, current_app, Response
 from Settings import ApiUrl
 
 def getStopPointById (stopId, isCrowded):
@@ -29,7 +29,7 @@ def getStopPointByIdAndType (stopId, placeType):
 
 def getCrowdingByIdAndLineAndDirection (stopId, lineId, direction):
     if stopId is None or lineId is None or direction is None:
-        return Response("The given arguments are None" 422)
+        return Response("The given arguments are None", 422)
     result = requests.get('{}StopPoint/{}/Crowding/{}?direction={}'.format(ApiUrl, stopId, lineId, direction))
     if (result is None or result == []):
         return Response("No result could be found", 422)
@@ -62,11 +62,11 @@ def getStopOfTypeWithPage (stopType, pageNumber):
 
 def getServicesForStop (stopId, lineId, serviceMode):
     if stopId is None:
-        return Response("The given stop id is None" 422)
+        return Response("The given stop id is None", 422)
     resultUrl = '{}StopPoint/ServiceTypes?id={}'.format(ApiUrl, stopId)
     if lineId is not None:
         resultUrl += '&lineIds={}'.format(lineId)
-    if serviceType is not None:
+    if serviceMode is not None:
         resultUrl += '&modes={}'.format(serviceMode)
     result = requests.get(resultUrl)
     if (result is None or result == []):
@@ -119,7 +119,7 @@ def getDisruptionsForMode (mode, includeBlocked):
     if mode is None:
         return Response("The given mode was None", 422)
     if includeBlocked is None:
-        includeBlocked = true
+        includeBlocked = True
     result = requests.get('{}StopPoint/Mode/{}/Disruption?includeRouteBlockedStops={}'.format(ApiUrl, mode, includeBlocked))
     if (result is None or result == []):
         return Response("No result could be found", 422)
@@ -158,7 +158,7 @@ def getStopPointsWithinRadius (stopType, radius, modes, categories, getLines, la
     if radius is None:
         radius = 200
     resultUrl = '{}StopPoint?stopTypes={}&radius={}&useStopPointHierarchy=true&categories={}&returnLines=true&location.lat={}&location.lon={}'.format(ApiUrl, stopType, radius, categories, lat, lon)
-    if mode is not None:
+    if modes is not None:
         resultUrl += '&modes={}'.format(modes)
     result = requests.get(resultUrl)
     if (result is None or result == []):

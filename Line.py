@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, jsonify, current_app
+from flask import Flask, jsonify, current_app, Response
 from Settings import ApiUrl
 
 def getLineStatus():
@@ -187,7 +187,7 @@ def getArrivalsForLineAndStop(lineId, sourceId, destId, direction):
             return Response("The given line id was empty", 422)
         if sourceId is None:
             return Response("The given line id was empty", 422)
-        resultUrl = '{}Line/{}/Arrivals/'.format(ApiUrl, lineId, sourceId, direction, destId)
+        resultUrl = '{}Line/{}/Arrivals/'.format(ApiUrl, lineId)
         if sourceId is not None:
             resultUrl += '{}'.format(sourceId)
         if direction is not None:

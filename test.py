@@ -1,6 +1,6 @@
 import requests
 from Settings import ApiUrl
-from flask import Flask, jsonify, current_app
+from flask import Flask, jsonify, current_app, Response
 
 def getLinesByMode(mode):
     with current_app.app_context():

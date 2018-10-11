@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, jsonify, current_app
+from flask import Flask, jsonify, current_app, Response
 from Settings import ApiUrl
 
 def getPlacesByTypeAndStatus(placeType, activeOnly):
@@ -72,7 +72,7 @@ def getPlaceByBoudingBox(zoom, placeType, width, height, lat, lon, locLat, locLo
         if zoom is None:
             zoom = 1
         if placeType is None or width is None or height is None or lat is None or lon is None or locLat is None or locLon is None:
-            return Respone("A given value was None", 422)
+            return Response("A given value was None", 422)
         result = requests.get('{}Place/{}/overlay/{}/{{Lat}}/{{Lon}}/{}/{}?lat={}&lon={}&location.lat={}&location.lon={}'.format(ApiUrl, placeType, zoom, lat, locLat, lat, lon, locLat, locLon))
         if (result is None or result == []):
             return Response("No result could be found", 422)
