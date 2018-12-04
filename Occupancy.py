@@ -9,9 +9,6 @@ def getCarParkOccupancyById(carParkId):
         result = requests.get('{}Occupancy/CarPark/{}'.format(ApiUrl, carParkId))
         if (result is None or result == []):
             return Response("No result could be found", 422)
-        if result.text[0] is '[':
-            print("Trimming the '[]' characters from the JSON response")
-            result.text = result.text[1:-1]
         return jsonify(result.text)
 
 def getChargeConnectorById(connectorId):
@@ -21,9 +18,6 @@ def getChargeConnectorById(connectorId):
         result = requests.get('{}Occupancy/ChargeConnector/{}'.format(ApiUrl, connectorId))
         if (result is None or result == []):
             return Response("No result could be found", 422)
-        if result.text[0] is '[':
-            print("Trimming the '[]' characters from the JSON response")
-            result.text = result.text[1:-1]
         return jsonify(result.text)
 
 def getBikePointOccupancyById(bikePointId):
@@ -33,7 +27,4 @@ def getBikePointOccupancyById(bikePointId):
         result = requests.get('{}Occupancy/BikePoints/{}'.format(ApiUrl, bikePointId))
         if (result is None or result == []):
             return Response("No result could be found", 422)
-        if result.text[0] is '[':
-            print("Trimming the '[]' characters from the JSON response")
-            result.text = result.text[1:-1]
         return jsonify(result.text)

@@ -11,9 +11,6 @@ def getStopPointById (stopId, isCrowded):
     result = requests.get(resultUrl)
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def getStopPointByIdAndType (stopId, placeType):
@@ -22,9 +19,6 @@ def getStopPointByIdAndType (stopId, placeType):
     result = requests.get('{}StopPoint/{}/placeTypes?placeTypes={}'.format(ApiUrl, stopId, placeType))
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def getCrowdingByIdAndLineAndDirection (stopId, lineId, direction):
@@ -33,9 +27,6 @@ def getCrowdingByIdAndLineAndDirection (stopId, lineId, direction):
     result = requests.get('{}StopPoint/{}/Crowding/{}?direction={}'.format(ApiUrl, stopId, lineId, direction))
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def getStopsOfType (stopType):
@@ -44,20 +35,6 @@ def getStopsOfType (stopType):
     result = requests.get('{}StopPoint/Type/{}'.format(ApiUrl, stopType))
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
-    return jsonify(result.text)
-
-def getStopOfTypeWithPage (stopType, pageNumber):
-    if stopType is None or pageNumber is None or type(pageNumber) is not int:
-        return Response("The given arguments are None or the wrong type", 422)
-    result = requests.get('{}StopPoint/Type/{}/page/{}'.format(ApiUrl, stopType, pageNumber))
-    if (result is None or result == []):
-        return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def getServicesForStop (stopId, lineId, serviceMode):
@@ -71,9 +48,6 @@ def getServicesForStop (stopId, lineId, serviceMode):
     result = requests.get(resultUrl)
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def getArrivalsByStopId (stopId):
@@ -82,9 +56,6 @@ def getArrivalsByStopId (stopId):
     result = requests.get('{}StopPoint/{}/Arrivals'.format(ApiUrl, stopId))
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def getStopsFromStationAndLine (stopId, lineId, service):
@@ -96,9 +67,6 @@ def getStopsFromStationAndLine (stopId, lineId, service):
     result = requests.get(resultUrl)
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def getRouteSectionsForStopPoint (stopId, serviceType):
@@ -110,9 +78,6 @@ def getRouteSectionsForStopPoint (stopId, serviceType):
     result = requests.get(resultUrl)
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def getDisruptionsForMode (mode, includeBlocked):
@@ -123,9 +88,6 @@ def getDisruptionsForMode (mode, includeBlocked):
     result = requests.get('{}StopPoint/Mode/{}/Disruption?includeRouteBlockedStops={}'.format(ApiUrl, mode, includeBlocked))
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def getDisruptionsForStop (stopId, getFamily, includeRouteBlocked, flattenResponse):
@@ -145,9 +107,6 @@ def getDisruptionsForStop (stopId, getFamily, includeRouteBlocked, flattenRespon
     result = requests.get(resultUrl)
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def getStopPointsWithinRadius (stopType, radius, modes, categories, getLines, lat, lon):
@@ -157,15 +116,12 @@ def getStopPointsWithinRadius (stopType, radius, modes, categories, getLines, la
         categories = "none"
     if radius is None:
         radius = 200
-    resultUrl = '{}StopPoint?stopTypes={}&radius={}&useStopPointHierarchy=true&categories={}&returnLines=true&location.lat={}&location.lon={}'.format(ApiUrl, stopType, radius, categories, lat, lon)
+    resultUrl = '{}StopPoint?stopTypes={}&radius={}&useStopPointHierarchy=true&categories={}&returnLines={}&lat={}&lon={}'.format(ApiUrl, stopType, radius, categories, getLines, lat, lon)
     if modes is not None:
         resultUrl += '&modes={}'.format(modes)
     result = requests.get(resultUrl)
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def getAllStopsByMode (mode, page):
@@ -176,9 +132,6 @@ def getAllStopsByMode (mode, page):
     result = requests.get('{}StopPoint/Mode/{}?page={}'.format(ApiUrl, mode, page))
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def searchStopPointsByQuery (queryString, modes, faresOnly, maxResults, lines, includeHubs, tflOnly):
@@ -200,9 +153,6 @@ def searchStopPointsByQuery (queryString, modes, faresOnly, maxResults, lines, i
     result = requests.get(resultUrl)
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)
 
 def getCarParksAtStopPoint (stopId):
@@ -211,7 +161,4 @@ def getCarParksAtStopPoint (stopId):
     result = requests.get('{}StopPoint/{}/CarParks'.format(ApiUrl, stopId))
     if (result is None or result == []):
         return Response("No result could be found", 422)
-    if result.text[0] is '[':
-        print("Trimming the '[]' characters from the JSON response")
-        result.text = result.text[1:-1]
     return jsonify(result.text)

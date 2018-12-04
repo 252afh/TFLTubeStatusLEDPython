@@ -12,9 +12,6 @@ def getPlacesByTypeAndStatus(placeType, activeOnly):
         result = requests.get(resultUrl)
         if (result is None or result == []):
             return Response("No result could be found", 422)
-        if result.text[0] is '[':
-            print("Trimming the '[]' characters from the result")
-            result.text = result.text[1:-1]
         return jsonify(result.text)
 
 def getPlaceById(placeId, includeChildren):
@@ -27,9 +24,6 @@ def getPlaceById(placeId, includeChildren):
         result = requests.get(resultUrl)
         if (result is None or result == []):
             return Response("No result could be found", 422)
-        if result.text[0] is '[':
-            print("Trimming the '[]' characters from the JSON response")
-            result.text = result.text[1:-1]
         return jsonify(result.text)
 
 # this does not exist according to TFL, check URL is correct
@@ -49,9 +43,6 @@ def getPlacesByBoundingbox(category, includeChildren, placeType, activeOnly, swL
         result = requests.get(resultUrl)
         if (result is None or result == []):
             return Response("No result could be found", 422)
-        if result.text[0] is '[':
-            print("Trimming the '[]' characters from the JSON response")
-            result.text = result.text[1:-1]
         return jsonify(result.text)
 
 # same problem as above, does not exist
@@ -62,23 +53,6 @@ def getPlaceAtLongAndLat(placeType, lat, lng, locLat, locLong):
         result = requests.get('{}Place/{}/At/{{Lat}}/{{Lon}}?lat={}&lon={}&location.lat={}&location.lon={}'.format(ApiUrl, placeType, lat, lng, locLat, locLong))
         if (result is None or result == []):
             return Response("No result could be found", 422)
-        if result.text[0] is '[':
-            print("Trimming the '[]' characters from the JSON response")
-            result.text = result.text[1:-1]
-        return jsonify(result.text)
-
-def getPlaceByBoudingBox(zoom, placeType, width, height, lat, lon, locLat, locLon):
-    with current_app.app_context():
-        if zoom is None:
-            zoom = 1
-        if placeType is None or width is None or height is None or lat is None or lon is None or locLat is None or locLon is None:
-            return Response("A given value was None", 422)
-        result = requests.get('{}Place/{}/overlay/{}/{{Lat}}/{{Lon}}/{}/{}?lat={}&lon={}&location.lat={}&location.lon={}'.format(ApiUrl, placeType, zoom, lat, locLat, lat, lon, locLat, locLon))
-        if (result is None or result == []):
-            return Response("No result could be found", 422)
-        if result.text[0] is '[':
-            print("Trimming the '[]' characters from the JSON response")
-            result.text = result.text[1:-1]
         return jsonify(result.text)
 
 def getPlaceByName(placeName, placeType):
@@ -88,7 +62,4 @@ def getPlaceByName(placeName, placeType):
         result = requests.get('{}Place/Search?name={}&types={}'.format(ApiUrl, placeName, placeType))
         if (result is None or result == []):
             return Response("No result could be found", 422)
-        if result.text[0] is '[':
-            print("Trimming the '[]' characters from the JSON response")
-            result.text = result.text[1:-1]
         return jsonify(result.text)

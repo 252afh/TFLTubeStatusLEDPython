@@ -1,5 +1,5 @@
 import requests
-from flask import Flask, jsonify, current_app
+from flask import Flask, jsonify, current_app, Response
 from Settings import ApiUrl
 
 def getBikePoints():
@@ -7,10 +7,8 @@ def getBikePoints():
         result = requests.get('{}BikePoint'.format(ApiUrl))
         if (result is None or result == []):
             return Response("No result could be found", 422)
-        if result.text[0] is '[':
-            print("Trimming the '[]' characters from the JSON response")
-            result.text = result.text[1:-1]
-        return jsonify(result.text)
+        text = result.text
+        return jsonify(text)
 
 def getBikePointById(Id):
     with current_app.app_context():
@@ -19,10 +17,8 @@ def getBikePointById(Id):
         result = requests.get('{}BikePoint/{}'.format(ApiUrl, Id))
         if (result is None or result == []):
             return Response("No result could be found", 422)
-        if result.text[0] is '[':
-            print("Trimming the '[]' characters from the JSON response")
-            result.text = result.text[1:-1]
-        return jsonify(result.text)
+        text = result.text
+        return jsonify(text)
 
 def getBikePointByQuery(searchTerm):
     with current_app.app_context():
@@ -31,7 +27,5 @@ def getBikePointByQuery(searchTerm):
         result = requests.get('{}BikePoint/Search?query={}'.format(ApiUrl, searchTerm))
         if (result is None or result == []):
             return Response("No result could be found", 422)
-        if result.text[0] is '[':
-            print("Trimming the '[]' characters from the JSON response")
-            result.text = result.text[1:-1]
-        return jsonify(result.text)
+        text = result.text
+        return jsonify(text)
