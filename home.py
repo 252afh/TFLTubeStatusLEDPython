@@ -1,13 +1,16 @@
 from flask import Flask, jsonify, json, request, Response
 from flask_sslify import SSLify
 import sys
+import pdb
+
 sys.path.append('/home/pi/Documents/FlaskAPI/TFLAPIScripts')
-from Line import *
-from BikePoint import *
-from Occupancy import *
-from Place import *
-from StopPoint import *
-from test import *
+from Line import getLinesByMode, getArrivalsForLineAndStop, getLineStatus, getLineById, getLineByIdAndService, getLineInfoByDateAndId, getLineStatusbyId, getLinesBySeverityCode, getLineStatusByMode, getSequenceOnRoute, getStationsOnLine, getTimetableForStationOnLine, getTimetableForJourney, getDisruptionsForGivenLine, getDisruptionsForGivenMode
+from BikePoint import getBikePointById, getBikePoints, getBikePointByQuery
+from Occupancy import getBikePointOccupancyById, getCarParkOccupancyById, getChargeConnectorById
+from Place import getPlaceById, getPlaceByName, getPlacesByBoundingbox, getPlacesByTypeAndStatus
+from StopPoint import searchStopPointsByQuery, getAllStopsByMode, getArrivalsByStopId, getCarParksAtStopPoint, getCrowdingByIdAndLineAndDirection, getDisruptionsForMode, getDisruptionsForStop, getRouteSectionsForStopPoint, getServicesForStop, getStopPointById, getStopPointByIdAndType, getStopPointsWithinRadius, getStopsFromStationAndLine, getStopsOfType
+from DatabaseAccess import InsertError, InsertRequest
+
 app = Flask(__name__)
 sslify = SSLify(app)
 
@@ -25,6 +28,7 @@ def getAllLineStatus():
     """
 
     result = getLineStatus()
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Line/getLinesById', methods=['GET'])
@@ -39,8 +43,10 @@ def getLinesById():
 
     id = request.args.get('id', default=None, type=str)
     if type(id) is not str:
+        InsertError('id must be string, value was {}'.format(type(id)), 422, request.url, request.remote_addr)
         return Response("The given Id was not a string", 422)
     result = getLineById(id)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Line/getByMode', methods=['GET'])
@@ -55,8 +61,10 @@ def getLineByMode():
 
     mode = request.args.get('mode', default = None, type = str)
     if type(mode) is not str:
+        InsertError('mode must be string, value was {}'.format(type(mode)), 422, request.url, request.remote_addr)
         return Response("The given mode was not a string", 422)
     result = getLinesByMode(mode)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Line/getByServiceAndId', methods=['GET'])
@@ -71,16 +79,19 @@ def getLineByServiceAndId():
         If not provided the API defaults to Regular anyway
     """
 
-    service = request.args.get('service',default=None,type=str)
-    id = request.args.get('id',default="Regular",type=str)
+    service = request.args.get('service',default="Regular",type=str)
+    id = request.args.get('id',default=None,type=str)
 
     if service == "":
         service = "Regular"
     if type(id) is not str:
+        InsertError('id must be string, value was {}'.format(type(id)), 422, request.url, request.remote_addr)
         return Response("The given id was not a string", 422)
     if service is not None and type(service) is not str:
+        InsertError('service must be string, value was {}'.format(type(service)), 422, request.url, request.remote_addr)
         return Response("The given service was not a string", 422)
     result = getLineByIdAndService(id, service)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Line/getLineByDateAndId', methods=['GET'])
@@ -100,8 +111,10 @@ def getLineByDateAndId():
     start = request.args.get('start', default = None, type = str)
     end = request.args.get('end', default = None, type = str)
     if type(id) is not str or type(start) is not str or type(end) is not str:
+        InsertError('id must be string, value was {}. start must be string, value was {}. end must be string, value was {}'.format(type(id), type(start), type(end)), 422, request.url, request.remote_addr)
         return Response("Parameters must be string", 422)
     result = getLineInfoByDateAndId(id, start, end, "true")
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Line/getLineStatusById', methods=['GET'])
@@ -117,8 +130,10 @@ def getStatusById():
 
     id = request.args.get('id', default = None, type = str)
     if type(id) is not str:
+        InsertError('id must be string, value was {}'.format(type(id)), 422, request.url, request.remote_addr)
         return Response("The id must be of type string", 422)
     result = getLineStatusbyId(id, "true")
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
     
 @app.route('/Line/getLineBySeverity', methods=['GET'])
@@ -133,8 +148,10 @@ def getLineBySeverity():
 
     severity = request.args.get('severitycode', default = None, type = str)
     if type(severity) is not str:
+        InsertError('severity must be string, value was {}'.format(type(severity)), 422, request.url, request.remote_addr)
         return Response("Severity code must be of type string", 422)
     result = getLinesBySeverityCode(severity)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Line/getLineStatusByMode', methods=['GET'])
@@ -150,8 +167,10 @@ def getLineStatusByModes():
 
     mode = request.args.get('mode', default = None, type = str)
     if type(mode) is not str:
+        InsertError('mode must be string, value was {}'.format(type(mode)), 422, request.url, request.remote_addr)
         return Response("Mode must be of type string", 422)
     result = getLineStatusByMode(mode, "true")
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
     
 @app.route('/Line/getStationsOnLineById', methods=['GET'])
@@ -167,15 +186,44 @@ def getStationsOnLineById():
 
     id = request.args.get('id', default = None, type = str)
     if type(id) is not str:
+        InsertError('id must be string, value was {}'.format(type(id)), 422, request.url, request.remote_addr)
         return Response("The given id must be of type string", 422)
     result = getStationsOnLine(id, "false")
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
+    return result
+
+@app.route('/Line/getSequenceOfStopsOnRoute', methods=['GET'])
+def getSequenceOfStopsOnRoute():
+    """ Returns a list of stations on a route
+    Required:
+        id is a single string representing the line to get stations on
+        direction is a single string of inbound or outbound
+    Optional:
+    serviceTypes is a single string or array specifying either Regular or Night service
+    Example: victoria, inbound, Regular
+    Note:
+    """
+
+    id = request.args.get('id', default = None, type = str)
+    direction = request.args.get('direction', default = "inbound", type = str)
+    serviceTypes = request.args.get('servicetype', default = "Regular", type = str)
+
+    if type(id) is not str:
+        InsertError('id must be string, value was {}'.format(type(id)), 422, request.url, request.remote_addr)
+        return Response("The given id must be of type string", 422)
+    if type(direction) is not str or (direction != "inbound" and direction != "outbound"):
+        direction = "inbound"
+    if serviceTypes != "Regular" and serviceTypes != "Night":
+        serviceTypes = "Regular"
+    result = getSequenceOnRoute(id, direction, serviceTypes, "false")
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Line/getTimetableForStationOnLine', methods=['GET'])
 def getTimetableForStationOnLineByStationIdLineId():
     """ Returns a timetable for a journey based on source station id and the line id
     Required:
-        sourceid is a single string representing the source station id
+        stationid is a single string representing the source station id
         lineid is a single string representing the line to get a timetable for
     Optional:
     Example: 940GZZLUASL, piccadilly
@@ -185,8 +233,10 @@ def getTimetableForStationOnLineByStationIdLineId():
     stationid = request.args.get('stationid', default = None, type = str)
     lineid = request.args.get('lineid', default = None, type = str)
     if type(stationid) is not str or type(lineid) is not str:
+        InsertError('stationid must be string, value was {}. lineid must be string, value was {}'.format(type(stationid), type(lineid)), 422, request.url, request.remote_addr)
         return Response("The station id and line id must be of type string", 422)
     result = getTimetableForStationOnLine(stationid, lineid)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Line/getTimetableForJouneyBySourceIdDestIdLineId', methods=['GET'])
@@ -205,8 +255,10 @@ def getTimetableForJouneyBySourceIdDestIdLineId():
     destid = request.args.get('destid', default = None, type = str)
     lineid = request.args.get('lineid', default = None, type = str)
     if type(sourceid) is not str or type(destid) is not str or type(lineid) is not str:
+        InsertError('sourceid must be string, value was {}. destid must be string, value was {}. lineid must be string, value was {}'.format(type(sourceid), type(destid), type(lineid)), 422, request.url, request.remote_addr)
         return Response("The source id, destination id and line id must be of type string", 422)
     result = getTimetableForJourney(sourceid, destid, lineid)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Line/getDisruptionsByLineId', methods=['GET'])
@@ -221,8 +273,10 @@ def getDisruptionsByLineId():
 
     lineid = request.args.get('lineid', default = None, type = str)
     if type(lineid) is not str:
+        InsertError('lineid must be string, value was {}'.format(type(lineid)), 422, request.url, request.remote_addr)
         return Response("The given line id musy be of type string", 422)
     result = getDisruptionsForGivenLine(lineid)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Line/getDisruptionsByMode', methods=['GET'])
@@ -237,8 +291,10 @@ def getDisruptionsByMode():
 
     mode = request.args.get('mode', default = None, type = str)
     if type(mode) is not str:
+        InsertError('mode must be string, value was {}'.format(type(mode)), 422, request.url, request.remote_addr)
         return Response("The given mode must be of type string", 422)
     result = getDisruptionsForGivenMode(mode)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Line/getArrivalsForLineAndStop', methods=['GET'])
@@ -261,6 +317,7 @@ def getArrivalsForLineAndStation():
     dest = request.args.get('dest', default = None, type = str)
     direction = request.args.get('direction', default = "all", type = str)
     if type(lineid) is not str or type(source) is not str:
+        InsertError('lineid must be string, value was {}. source must be string, value was {}'.format(type(lineid), type(source)), 422, request.url, request.remote_addr)
         return Response("The line id and source id must be of type string", 422)
     if dest == "":
         dest = None
@@ -268,14 +325,18 @@ def getArrivalsForLineAndStation():
         direction = None
     if dest is not None:
         if type(dest) is not str:
+            InsertError('dest must be string, value was {}'.format(type(dest)), 422, request.url, request.remote_addr)
             return Response("The destination if given must be of type string", 422)
     if direction is not None:
         if type(direction) is not str:
+            InsertError('direction must be string, value was {}'.format(type(direction)), 422, request.url, request.remote_addr)
             return Response("The direction if given must be of type string", 422)
         direction = direction.lower()
-        if direction is not "inbound" and direction is not "outbound" and direction is not "all":
+        if direction != "inbound" and direction != "outbound" and direction != "all":
+            InsertError('direction must be inbound, outbound or all, value was {}'.format(direction), 422, request.url, request.remote_addr)
             return Response("The given direction must be: outbound, inbound or all", 422)
     result = getArrivalsForLineAndStop(lineid, source, dest, direction)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Bike/getBikePoints', methods=['GET'])
@@ -288,6 +349,7 @@ def getAllBikePoints():
     """
 
     result = getBikePoints()
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Bike/getBikePointById', methods=['GET'])
@@ -302,8 +364,10 @@ def getBikePointsById():
 
     id = request.args.get('id', default = None, type = str)
     if type(id) is not str:
+        InsertError('id must be string, value was {}'.format(type(id)), 422, request.url, request.remote_addr)
         return Response("The given id must be of type string", 422)
     result = getBikePointById(id)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Bike/getBikePointByQuery', methods=['GET'])
@@ -318,8 +382,10 @@ def getBikePointsByQuery():
 
     query = request.args.get('query', default = None, type = str)
     if type(query) is not str:
+        InsertError('query must be string, value was {}'.format(type(query)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getBikePointByQuery(query)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Occupancy/getCarParkById', methods=['GET'])
@@ -334,8 +400,10 @@ def getCarParkById():
 
     id = request.args.get('id', default = None, type = str)
     if type(id) is not str:
+        InsertError('id must be string, value was {}'.format(type(id)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getCarParkOccupancyById(id)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Occupancy/getChargeById', methods=['GET'])
@@ -350,8 +418,10 @@ def getChargeById():
 
     id = request.args.get('id', default = None, type = str)
     if type(id) is not str:
+        InsertError('id must be string, value was {}'.format(type(id)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getChargeConnectorById(id)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Occupancy/getBikePointById', methods=['GET'])
@@ -366,8 +436,10 @@ def getConnectorById():
 
     id = request.args.get('id', default = None, type = str)
     if type(id) is not str:
+        InsertError('id must be string, value was {}'.format(type(id)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getBikePointOccupancyById(id)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Place/GetPlaceByTypeAndStatus', methods=['GET'])
@@ -385,8 +457,10 @@ def getPlaceByTypeAndStatus():
     placeType = request.args.get('type', default = None, type = str)
     activeOnly = request.args.get('activeonly', default = None, type = str)
     if type(placeType) is not str or type(activeOnly) is not str:
+        InsertError('placeType must be string, value was {}. activeOnly must be string, value was {}'.format(type(placeType), type(activeOnly)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getPlacesByTypeAndStatus(placeType, activeOnly)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Place/GetPlaceById', methods=['GET'])
@@ -402,8 +476,10 @@ def getPlacesById():
     
     id = request.args.get('id', default = None, type = str)
     if type(id) is not str:
+        InsertError('id must be string, value was {}'.format(type(id)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getPlaceById(id, "true")
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Place/GetPlaceByBounds', methods=['GET'])
@@ -427,7 +503,7 @@ def getPlacesByBounds():
     placeType = request.args.get('type', default = None, type = str)
     categories = request.args.get('categories', default = None, type = str)
     includeChildren = request.args.get('includechildren', default = "true", type = str)
-    activeOnly = request.args.get('activeonly', default = "true", type=str)
+    activeOnly = request.args.get('activeonly', default = "false", type=str)
     swlat = request.args.get('swlat', default = None, type = str)
     swlon = request.args.get('swlon', default = None, type = str)
     nelat = request.args.get('nelat', default = None, type = str)
@@ -440,11 +516,12 @@ def getPlacesByBounds():
     if includeChildren == "":
         includeChildren = "true"
     if activeOnly == "":
-        activeOnly = "true"
-
+        activeOnly = "false"
     if type(swlat) is not str or type(swlon) is not str or type(nelat) is not str or type(nelon) is not str:
+        InsertError('swlat must be string, value was {}. swlon must be string, value was {}. nelat must be string, value was {}. nelon must be string, value was {}.'.format(type(swlat), type(swlon), type(nelat), type(nelon)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getPlacesByBoundingbox(categories, includeChildren, placeType, activeOnly, swlat, swlon, nelat, nelon)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/Place/GetPlaceByName', methods=['GET'])
@@ -465,8 +542,10 @@ def getPlacesByName():
         placeType = None
 
     if type(name) is not str:
+        InsertError('name must be string, value was {}'.format(type(name)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getPlaceByName(name, placeType)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetStopPointById', methods=['GET'])
@@ -487,8 +566,10 @@ def getStopPointInfoById():
         crowded = "true"
 
     if type(id) is not str:
+        InsertError('id must be string, value was {}'.format(type(id)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getStopPointById(id, crowded)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetStopPointByIdAndType', methods=['GET'])
@@ -505,8 +586,10 @@ def getStopPointInfoByIdAndType():
     stopid = request.args.get('id', default = None, type = str)
     placeType = request.args.get('type', default = None, type = str)
     if type(stopid) is not str or type(placeType) is not str:
+        InsertError('stopid must be string, value was {}. placeType must be a string, value was {}'.format(type(stopid), type(placeType)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getStopPointByIdAndType(stopid, placeType)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetCrowdingByStopLineDirection', methods=['GET'])
@@ -531,9 +614,11 @@ def getCrowdingByStopLineDirection():
     direction = direction.lower()
 
     if stopid is None or lineid is None:
+        InsertError('lineid must be string, value was {}'.format(type(lineid)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422) 
 
     result = getCrowdingByIdAndLineAndDirection(stopid, lineid, direction)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetStopByType', methods=['GET'])
@@ -549,8 +634,10 @@ def getStopByType():
 
     stopType = request.args.get('type', default = None, type = str)
     if type(stopType) is not str:
+        InsertError('stopType must be string, value was {}'.format(type(stopType)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getStopsOfType(stopType)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetServicesForStop', methods=['GET'])
@@ -575,8 +662,10 @@ def getServicesForStopPoint():
         mode = None
     
     if type(stopid) is not str:
+        InsertError('stopid must be string, value was {}'.format(type(stopid)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getServicesForStop(stopid, lineid, mode)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetArrivalsForStop', methods=['GET'])
@@ -591,8 +680,10 @@ def getArrivalsForStopPoint():
 
     stopid = request.args.get('stopid', default = None, type = str)
     if type(stopid) is not str:
+        InsertError('stopid must be string, value was {}'.format(type(stopid)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getArrivalsByStopId(stopid)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetStopsOnLineFromStop', methods=['GET'])
@@ -620,8 +711,10 @@ def getStopsOnLineFromStop():
         serviceType = "Regular"
 
     if type(stopid) is not str or type(lineid) is not str:
+        InsertError('lineid must be string, value was {}'.format(type(lineid)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getStopsFromStationAndLine(stopid, lineid, serviceType)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetRouteSectionsFromStop', methods=['GET'])
@@ -642,8 +735,10 @@ def getRouteSectionsfromStop():
         serviceType = "Regular"
 
     if type(stopid) is not str:
+        InsertError('stopid must be string, value was {}'.format(type(stopid)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getRouteSectionsForStopPoint(stopid, serviceType)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetDisruptionsForMode', methods=['GET'])
@@ -663,8 +758,10 @@ def getDisruptionsOnMode():
         includeblocked = "true"
 
     if type(servicemode) is not str:
+        InsertError('servicemode must be string, value was {}'.format(type(servicemode)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getDisruptionsForMode(servicemode, includeblocked)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetDisruptionsForStopPoint', methods=['GET'])
@@ -698,8 +795,10 @@ def getDisruptionsForStopPoint():
             flatten = "true"
     
     if type(stopid) is not str:
+        InsertError('stopid must be string, value was {}'.format(type(stopid)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getDisruptionsForStop(stopid, getfamily, includeblocked, flatten)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetStopsWithinRadius', methods=['GET'])
@@ -736,8 +835,10 @@ def getStopsWithinRadius():
         includelines = "true"
 
     if type(stopType) is not str or type(lat) is not str or type(lon) is not str:
+        InsertError('stopType must be string, value was {}. lat must be str, value was {}. lon must be str, value was {}.'.format(type(stopType), type(lat), type(lon)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getStopPointsWithinRadius(stopType, radius, mode, categories, includelines, lat, lon)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetStopsByMode', methods=['GET'])
@@ -758,8 +859,10 @@ def getStopsByMode():
         page = "1"
     print(servicemode)
     if type(servicemode) is not str:
+        InsertError('servicemode must be string, value was {}'.format(type(servicemode)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getAllStopsByMode(servicemode, page)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetStopPointsByQuery', methods=['GET'])
@@ -799,8 +902,10 @@ def getStopsByQuery():
         tflOnly = "false"
 
     if type(query) is not str:
+        InsertError('query must be string, value was {}'.format(type(query)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = searchStopPointsByQuery(query, modes, faresOnly, results, lines, includeHubs, tflOnly)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result
 
 @app.route('/StopPoint/GetCarParksAtStopPoint', methods=['GET'])
@@ -813,6 +918,8 @@ def getCarParksAtStop():
 
     stopid = request.args.get('stopid', default = None, type = str)
     if type(stopid) is not str:
+        InsertError('stopid must be string, value was {}'.format(type(stopid)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = getCarParksAtStopPoint(stopid)
+    InsertRequest(request.url, request.method, request.remote_addr, result.json)
     return result

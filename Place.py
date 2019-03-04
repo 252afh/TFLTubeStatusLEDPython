@@ -77,6 +77,7 @@ def getPlacesByBoundingbox(category, includeChildren, placeType, activeOnly, swL
             resultUrl += '&type={}'.format(placeType)
         if activeOnly is not None:
             resultUrl += '&activeOnly={}'.format(activeOnly)
+        print('request url = {}'.format(resultUrl))
         result = requests.get(resultUrl)
         if (result is None or result == []):
             return Response("No result could be found", 422)

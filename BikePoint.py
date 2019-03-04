@@ -1,6 +1,8 @@
 import requests
-from flask import Flask, jsonify, current_app, Response
+import pdb
+from flask import Flask, jsonify, current_app, Response, request
 from Settings import ApiUrl, appid, appkey
+from DatabaseAccess import InsertError
 
 def getBikePoints():
     """ Returns information about all bike points
@@ -14,6 +16,7 @@ def getBikePoints():
     with current_app.app_context():
         result = requests.get('{}BikePoint?{}&{}'.format(ApiUrl, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -30,9 +33,11 @@ def getBikePointById(Id):
 
     with current_app.app_context():
         if Id is None:
+            InsertError('Id must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No Bike Point Id supplied", 422)
         result = requests.get('{}BikePoint/{}?{}&{}'.format(ApiUrl, Id, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -49,9 +54,11 @@ def getBikePointByQuery(searchTerm):
 
     with current_app.app_context():
         if searchTerm is None:
+            InsertError('searchTerm must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No search term supplied", 422)
         result = requests.get('{}BikePoint/Search?query={}&{}&{}'.format(ApiUrl, searchTerm, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)

@@ -1,6 +1,7 @@
 import requests
-from flask import Flask, jsonify, current_app, Response
+from flask import Flask, jsonify, current_app, Response, request
 from Settings import ApiUrl, appid, appkey
+from DatabaseAccess import InsertError
 
 def getLineStatus():
     """ Returns a list of all tube and dlr lines and their statuses
@@ -14,6 +15,7 @@ def getLineStatus():
     with current_app.app_context():
         result = requests.get('{}Line/Mode/tube%2Cdlr/Status?{}&{}'.format(ApiUrl, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -30,9 +32,11 @@ def getLineById(Id):
 
     with current_app.app_context():
         if Id is None:
+            InsertError('Id must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The supplied Id is empty", 422)
         result = requests.get('{}Line/{}?{}&{}'.format(ApiUrl, Id, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -49,9 +53,11 @@ def getLinesByMode(mode):
 
     with current_app.app_context():
         if mode is None:
+            InsertError('mode must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The supplied mode is empty", 422)
         result = requests.get('{}Line/Mode/{}?{}&{}'.format(ApiUrl, mode, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -70,12 +76,14 @@ def getLineByIdAndService(Id, service):
 
     with current_app.app_context():
         if Id is None:
+            InsertError('Id must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The supplied Id was empty", 422)
         requestUrl = '{}Line/{}/Route?{}&{}'.format(ApiUrl, Id, appid, appkey)
         if service is not None:
             requestUrl += '&serviceTypes={}'.format(service)
         result = requests.get(requestUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -95,16 +103,20 @@ def getLineInfoByDateAndId(Id, startDate, endDate, detail):
 
     with current_app.app_context():
         if id is None:
+            InsertError('id must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The supplied Id was empty", 422)
         if startDate is None:
+            InsertError('startDate must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The supplied start date was empty", 422)
         if endDate is None:
+            InsertError('endDate must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The supplied end date was empty", 422)
         requestUrl = '{}Line/{}/Status/{}/to/{}?{}&{}'.format(ApiUrl, Id, startDate, endDate, appid, appkey)
         if detail is not None:
             requestUrl += '&detail={}'.format(detail)
         result = requests.get(requestUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -122,12 +134,14 @@ def getLineStatusbyId(Id, detail):
 
     with current_app.app_context():
         if Id is None:
+            InsertError('Id must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The supplied Id was empty", 422)
         requestUrl = '{}Line/{}/Status?{}&{}'.format(ApiUrl, Id, appid, appkey)
         if detail is not None:
             requestUrl += '&detail={}'.format(detail)
         result = requests.get(requestUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -144,9 +158,11 @@ def getLinesBySeverityCode(severitycode):
 
     with current_app.app_context():
         if severitycode is None:
+            InsertError('severitycode must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The supplied severity was empty", 422)
         result = requests.get('{}Line/Status/{}?{}&{}'.format(ApiUrl, severitycode, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -164,12 +180,14 @@ def getLineStatusByMode(mode, detail):
 
     with current_app.app_context():
         if mode is None:
+            InsertError('mode must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The supplied line was empty", 422)
         requestUrl = '{}Line/Mode/{mode}/Status?{}&{}'.format(ApiUrl, mode, appid, appkey)
         if detail is not None:
             requestUrl += '&detail={}'.format(detail)
         result = requests.get(requestUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -187,12 +205,40 @@ def getStationsOnLine(Id, tflOnly):
 
     with current_app.app_context():
         if Id is None:
+            InsertError('Id must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The supplied Id was empty", 422)
         requestUrl = '{}Line/{}/StopPoints?{}&{}'.format(ApiUrl, Id, appid, appkey)
         if tflOnly is not None:
             requestUrl += '&tflOperatedNationalRailStationsOnly={}'.format(tflOnly)
         result = requests.get(requestUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
+            return Response("No result could be found", 422)
+        text = result.text
+        return jsonify(text)
+
+def getSequenceOnRoute(Id, direction, types, excludeCrowding):
+    """ Returns a list of stations on a route
+    Required:
+        id is a single string representing the line to get stations on
+        direction is a single string of inbound or outbound
+    Optional:
+        serviceTypes is a single string or array specifying either Regular or Night service
+    Example: victoria, inbound, Regular
+    Note:
+    """
+
+    with current_app.app_context():
+        if Id is None:
+            InsertError('Id must not be None, value was None', 422, request.url, request.remote_addr)
+            return Response("The supplied Id was empty", 422)
+        if direction is None:
+            InsertError('direction must not be None, value was None', 422, request.url, request.remote_addr)
+            return Response("The supplied direction was empty", 422)
+        requestUrl = '{}Line/{}/Route/Sequence/{}?serviceTypes={}&excludeCrowding={}&{}&{}'.format(ApiUrl, Id, direction, types, excludeCrowding, appid, appkey)
+        result = requests.get(requestUrl)
+        if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -211,11 +257,14 @@ def getTimetableForStationOnLine(stationId, lineId):
 
     with current_app.app_context():
         if stationId is None:
+            InsertError('stationId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given station id was empty", 422)
         if lineId is None:
+            InsertError('lineId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given line id is empty", 422)
         result = requests.get('{}Line/{}/Timetable/{}?{}&{}'.format(ApiUrl, lineId, stationId, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -234,13 +283,17 @@ def getTimetableForJourney(sourceId, destId, lineId):
 
     with current_app.app_context():
         if sourceId is None:
+            InsertError('sourceId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given source station id is empty", 422)
         if destId is None:
+            InsertError('destId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given destination station id is empty", 422)
         if lineId is None:
+            InsertError('lineId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given line id is empty", 422)
         result = requests.get('{}Line/{}/Timetable/{}/to/{}?{}&{}'.format(ApiUrl, lineId, sourceId, destId, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -257,9 +310,11 @@ def getDisruptionsForGivenLine(lineId):
 
     with current_app.app_context():
         if lineId is None:
+            InsertError('lineId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given line id was empty", 422)
         result = requests.get('{}Line/{}/Disruption?{}&{}'.format(ApiUrl, lineId, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -276,9 +331,11 @@ def getDisruptionsForGivenMode(mode):
 
     with current_app.app_context():
         if mode is None:
+            InsertError('mode must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given line mode was empty", 422)
         result = requests.get('{}Line/Mode/{}/Disruption?{}&{}'.format(ApiUrl, mode, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)
@@ -300,8 +357,10 @@ def getArrivalsForLineAndStop(lineId, sourceId, destId, direction):
 
     with current_app.app_context():
         if lineId is None:
+            InsertError('lineId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given line id was empty", 422)
         if sourceId is None:
+            InsertError('sourceId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given line id was empty", 422)
         resultUrl = '{}Line/{}/Arrivals/{}?{}&{}'.format(ApiUrl, lineId, sourceId, appid, appkey)
         if direction is not None:
@@ -310,6 +369,7 @@ def getArrivalsForLineAndStop(lineId, sourceId, destId, direction):
             resultUrl += '&destinationStationId={}'.format(destId)
         result = requests.get(resultUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         text = result.text
         return jsonify(text)

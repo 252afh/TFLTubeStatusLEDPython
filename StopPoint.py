@@ -1,6 +1,7 @@
 import requests
-from flask import Flask, jsonify, current_app, Response
+from flask import Flask, jsonify, current_app, Response, request
 from Settings import ApiUrl, appid, appkey
+from DatabaseAccess import InsertError
 
 def getStopPointById (stopId, isCrowded):
     """ Returns a list of stop points filtered by station id
@@ -15,12 +16,14 @@ def getStopPointById (stopId, isCrowded):
 
     with current_app.app_context():
         if stopId is None:
+            InsertError('stopId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given stop id was None", 422)
         resultUrl = '{}StopPoint/{}?{}&{}'.format(ApiUrl, stopId, appid, appkey)
         if isCrowded is not None:
             resultUrl += '&includeCrowdingData={}'.format(isCrowded)
         result = requests.get(resultUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -37,9 +40,11 @@ def getStopPointByIdAndType (stopId, placeType):
 
     with current_app.app_context():
         if stopId is None or placeType is None:
+            InsertError('stopId must not be None, value was None. placeType must not be none, value was None.', 422, request.url, request.remote_addr)
             return Response("The given arguments are None", 422)
         result = requests.get('{}StopPoint/{}/placeTypes?placeTypes={}&{}&{}'.format(ApiUrl, stopId, placeType, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -57,9 +62,11 @@ def getCrowdingByIdAndLineAndDirection (stopId, lineId, direction):
 
     with current_app.app_context():
         if stopId is None or lineId is None or direction is None:
+            InsertError('stopId must not be None, value was None. lineId must not be None, value was None. direction must not be None, value was None.', 422, request.url, request.remote_addr)
             return Response("The given arguments are None", 422)
         result = requests.get('{}StopPoint/{}/Crowding/{}?direction={}&{}&{}'.format(ApiUrl, stopId, lineId, direction, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -76,9 +83,11 @@ def getStopsOfType (stopType):
 
     with current_app.app_context():
         if stopType is None:
+            InsertError('stopType must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given argument was None", 422)
         result = requests.get('{}StopPoint/Type/{}?{}&{}'.format(ApiUrl, stopType, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -96,6 +105,7 @@ def getServicesForStop (stopId, lineId, serviceMode):
 
     with current_app.app_context():
         if stopId is None:
+            InsertError('stopId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given stop id is None", 422)
         resultUrl = '{}StopPoint/ServiceTypes?id={}&{}&{}'.format(ApiUrl, stopId, appid, appkey)
         if lineId is not None:
@@ -104,6 +114,7 @@ def getServicesForStop (stopId, lineId, serviceMode):
             resultUrl += '&modes={}'.format(serviceMode)
         result = requests.get(resultUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -119,9 +130,11 @@ def getArrivalsByStopId (stopId):
 
     with current_app.app_context():
         if stopId is None:
+            InsertError('stopId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given stop id is None", 422)
         result = requests.get('{}StopPoint/{}/Arrivals?{}&{}'.format(ApiUrl, stopId, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -139,12 +152,14 @@ def getStopsFromStationAndLine (stopId, lineId, service):
 
     with current_app.app_context():
         if stopId is None or lineId is None:
+            InsertError('stopId must not be None, value was None. lineId must not be None, value was None.', 422, request.url, request.remote_addr)
             return Response("The given stop or line id was None", 422)
         resultUrl = '{}StopPoint/{}/CanReachOnLine/{}?{}&{}'.format(ApiUrl, stopId, lineId, appid, appkey)
         if service is not None:
             resultUrl += '&serviceTypes={}'.format(service)
         result = requests.get(resultUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -161,12 +176,14 @@ def getRouteSectionsForStopPoint (stopId, serviceType):
 
     with current_app.app_context():
         if stopId is None:
+            InsertError('stopId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given stop id was None", 422)
         resultUrl = '{}StopPoint/{}/Route?{}&{}'.format(ApiUrl, stopId, appid, appkey)
         if serviceType is not None:
             resultUrl += '&serviceTypes={}'.format(serviceType)
         result = requests.get(resultUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -182,11 +199,13 @@ def getDisruptionsForMode (mode, includeBlocked):
 
     with current_app.app_context():
         if mode is None:
+            InsertError('mode must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given mode was None", 422)
         if includeBlocked is None:
             includeBlocked = True
         result = requests.get('{}StopPoint/Mode/{}/Disruption?includeRouteBlockedStops={}&{}&{}'.format(ApiUrl, mode, includeBlocked, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -205,6 +224,7 @@ def getDisruptionsForStop (stopId, getFamily, includeRouteBlocked, flattenRespon
 
     with current_app.app_context():
         if stopId is None:
+            InsertError('stopId must not be None, value was None', 422, request.url, request.remote_addr)
             return ("The given stop id was None", 422)
         if getFamily is None:
             getFamily = False
@@ -219,6 +239,7 @@ def getDisruptionsForStop (stopId, getFamily, includeRouteBlocked, flattenRespon
             resultUrl += '&flattenResponse={}'.format(flattenResponse)
         result = requests.get(resultUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -241,6 +262,7 @@ def getStopPointsWithinRadius (stopType, radius, modes, categories, getLines, la
 
     with current_app.app_context():
         if stopType is None or lat is None or lon is None:
+            InsertError('stopType must not be None, value was None. lat must not be None, value was None. lon must not be None, value was None.', 422, request.url, request.remote_addr)
             return Response("The given arguments are None", 422)
         if categories is None:
             categories = "none"
@@ -251,6 +273,7 @@ def getStopPointsWithinRadius (stopType, radius, modes, categories, getLines, la
             resultUrl += '&modes={}'.format(modes)
         result = requests.get(resultUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -268,11 +291,13 @@ def getAllStopsByMode (mode, page):
 
     with current_app.app_context():
         if mode is None:
+            InsertError('mode must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given mode was None", 422)
         if page is None:
             page = 1
         result = requests.get('{}StopPoint/Mode/{}?page={}&{}&{}'.format(ApiUrl, mode, page, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -294,6 +319,7 @@ def searchStopPointsByQuery (queryString, modes, faresOnly, maxResults, lines, i
 
     with current_app.app_context():
         if queryString is None:
+            InsertError('queryString must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given query string was None", 422)
         if faresOnly is None:
             faresOnly = False
@@ -310,6 +336,7 @@ def searchStopPointsByQuery (queryString, modes, faresOnly, maxResults, lines, i
             resultUrl += '&lines={}'.format(lines)
         result = requests.get(resultUrl)
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -324,8 +351,10 @@ def getCarParksAtStopPoint (stopId):
 
     with current_app.app_context():
         if stopId is None:
+            InsertError('stopId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given stop id was None", 422)
         result = requests.get('{}StopPoint/{}/CarParks?{}&{}'.format(ApiUrl, stopId, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)

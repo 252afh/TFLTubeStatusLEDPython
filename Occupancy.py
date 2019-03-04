@@ -1,6 +1,7 @@
 import requests
-from flask import Flask, jsonify, current_app, Response
+from flask import Flask, jsonify, current_app, Response, request
 from Settings import ApiUrl, appid, appkey
+from DatabaseAccess import InsertError
 
 def getCarParkOccupancyById(carParkId):
     """ Returns occupancy of a carpark based on the id
@@ -14,9 +15,11 @@ def getCarParkOccupancyById(carParkId):
 
     with current_app.app_context():
         if carParkId is None:
+            InsertError('carParkId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given carpark id was empty", 422)
         result = requests.get('{}Occupancy/CarPark/{}?{}&{}'.format(ApiUrl, carParkId, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -32,9 +35,11 @@ def getChargeConnectorById(connectorId):
 
     with current_app.app_context():
         if connectorId is None:
+            InsertError('connectorId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given charge connector id was empty", 422)
         result = requests.get('{}Occupancy/ChargeConnector/{}?{}&{}'.format(ApiUrl, connectorId, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
 
@@ -50,8 +55,10 @@ def getBikePointOccupancyById(bikePointId):
 
     with current_app.app_context():
         if bikePointId is None:
+            InsertError('bikePointId must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("The given bike point id is empty", 422)
         result = requests.get('{}Occupancy/BikePoints/{}?{}&{}'.format(ApiUrl, bikePointId, appid, appkey))
         if (result is None or result == []):
+            InsertError('result must not be None, value was None', 422, request.url, request.remote_addr)
             return Response("No result could be found", 422)
         return jsonify(result.text)
