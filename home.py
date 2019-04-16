@@ -1051,6 +1051,11 @@ def get_car_parks_at_stop():
 
 @app.route('/Diagnostic')
 def display_diagnostics():
+    """
+    Returns a web page rendered to include the diagnostics graphs and value. Uses the Diagnostics.html template found
+    in the 'templates' folder
+    :return: A rendered template web page
+    """
     top3 = DatabaseAccess.get_top_three_origins()
     total = 0
     top3_chart = pygal.Pie()
