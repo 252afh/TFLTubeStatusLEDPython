@@ -1,0 +1,76 @@
+{% block body %}
+<html lang="en">
+<head>
+    <title>Diagnostic screen</title>
+    <link href="{{ url_for('static', filename='Styles.css') }}" rel="stylesheet" type="text/css">
+</head>
+<body class="body">
+<div style="flex: 1;flex-direction: row;display: flex;height: 65%;">
+    <div style="flex-direction: row; order: 1;">
+        <div style="flex-direction: column; align-items: center; order: 2; margin: 20px;">
+            <label style="order: 1;height: 10%;">Errors</label>
+            <h1 style="order: 2;height: 30%;">{{ error_count }}</h1>
+        </div>
+
+        <div style="flex-direction: column; align-items: center; order: 3; margin: 20px;">
+            <label style="order: 1; height: 10%;">Successful</label>
+            <h1 style="order: 2; height: 30%;">{{ success_count }}</h1>
+        </div>
+    </div>
+    <embed type="image/svg+xml"
+           src={{top_three|safe}}
+           style="order: 2;width: 40%;">
+
+    <embed type="image/svg+xml"
+           src={{calls|safe}}
+           style="order: 6;width: 55%;">
+</div>
+<div style="flex: 2;flex-direction: row;display: flex;height: 28%; margin-top: 2%">
+    <div id="recentErrors" style="flex-direction: column; order: 1; min-width: 45%">
+        <table class="blueTable">
+            <caption>Most recent errors</caption>
+            <tbody>
+            <tr>
+                <th>Error id</th>
+                <th>Error message</th>
+                <th>Error Code</th>
+                <th>URL</th>
+                <th>Date</th>
+                <th>Origin</th>
+            </tr>
+            {% for row in errors %}
+            <tr>
+                <td>{{ row[0] }}</td>
+                <td>{{ row[1].decode('utf-8') }}</td>
+                <td>{{ row[2].decode('utf-8') }}</td>
+                <td>{{ row[3].decode('utf-8') }}</td>
+                <td>{{ row[4] }}</td>
+                <td>{{ row[5].decode('utf-8') }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div id="callOccurence" style="flex-direction: column; order: 2; min-width: 45%; margin-left: 10%;">
+        <table class="blueTable">
+            <caption>Most common requests</caption>
+            <tbody>
+            <tr>
+                <th>URL</th>
+                <th>No. of calls</th>
+            </tr>
+
+            {% for row in topurls %}
+            <tr>
+                <td>{{ row[0].decode('utf-8') }}</td>
+                <td>{{ row[1] }}</td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+</body>
+</html>
+{% endblock %}
