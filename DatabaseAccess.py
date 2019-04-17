@@ -16,7 +16,7 @@ class DatabaseAccess:
         :return: None
         """
         statement = "INSERT INTO Request (CalledUrl, Method, Origin, ResponseData, CalledDate) values (%s, %s, %s, %s, %s)"
-        Settings.cursor.execute(statement, (url, method, request_origin, response_data, datetime.now()))
+        Settings.cursor.execute(statement, (url, method, request_origin, response_data, datetime.datetime.now()))
         Settings.mariadb_connection.commit()
 
     @staticmethod
@@ -30,7 +30,7 @@ class DatabaseAccess:
         :return: None
         """
         statement = "INSERT INTO Errors (ErrorMessage, ErrorCode, CalledUrl, Origin, CalledDate) values (%s, %s, %s, %s, %s)"
-        Settings.cursor.execute(statement, (error_message, error_code, url, origin, datetime.now()))
+        Settings.cursor.execute(statement, (error_message, error_code, url, origin, datetime.datetime.now()))
         Settings.mariadb_connection.commit()
 
     @staticmethod
