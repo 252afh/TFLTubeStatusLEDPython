@@ -27,6 +27,7 @@ class Occupancy:
             if result.status_code != 200:
                 DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
                                             request.remote_addr).format(result.status_code)
+                return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -50,6 +51,7 @@ class Occupancy:
             if result.status_code != 200:
                 DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
                                             request.remote_addr).format(result.status_code)
+                return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -77,6 +79,7 @@ class Occupancy:
             if result.status_code != 200:
                 DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
                                             request.remote_addr).format(result.status_code)
+                return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -98,6 +101,7 @@ class Occupancy:
             if result.status_code != 200:
                 DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
                                             request.remote_addr).format(result.status_code)
+                return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -125,6 +129,7 @@ class Occupancy:
             if result.status_code != 200:
                 DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
                                             request.remote_addr).format(result.status_code)
+                return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
