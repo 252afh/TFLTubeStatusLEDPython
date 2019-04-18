@@ -18,8 +18,12 @@ class BikePoint:
 
         with current_app.app_context():
             result = requests.get('{}BikePoint?{}&{}'.format(Settings.ApiUrl, Settings.appid, Settings.appkey))
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
-                DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url, request.remote_addr)
+                DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("No result could be found", 422)
             text = result.text
             return jsonify(text)
@@ -37,11 +41,17 @@ class BikePoint:
 
         with current_app.app_context():
             if bike_point_id is None:
-                DatabaseAccess.insert_error('id must not be None, value was None', 422, request.url, request.remote_addr)
+                DatabaseAccess.insert_error('id must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("No Bike Point id supplied", 422)
-            result = requests.get('{}BikePoint/{}?{}&{}'.format(Settings.ApiUrl, bike_point_id, Settings.appid, Settings.appkey))
+            result = requests.get('{}BikePoint/{}?{}&{}'.format(Settings.ApiUrl, bike_point_id, Settings.appid,
+                                                                Settings.appkey))
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
-                DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url, request.remote_addr)
+                DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("No result could be found", 422)
             text = result.text
             return jsonify(text)
@@ -59,11 +69,17 @@ class BikePoint:
 
         with current_app.app_context():
             if search_term is None:
-                DatabaseAccess.insert_error('search_term must not be None, value was None', 422, request.url, request.remote_addr)
+                DatabaseAccess.insert_error('search_term must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("No search term supplied", 422)
-            result = requests.get('{}BikePoint/Search?query={}&{}&{}'.format(Settings.ApiUrl, search_term, Settings.appid, Settings.appkey))
+            result = requests.get('{}BikePoint/Search?query={}&{}&{}'.format(Settings.ApiUrl, search_term,
+                                                                             Settings.appid, Settings.appkey))
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
-                DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url, request.remote_addr)
+                DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("No result could be found", 422)
             text = result.text
             return jsonify(text)

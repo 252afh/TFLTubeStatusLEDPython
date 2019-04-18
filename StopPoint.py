@@ -27,6 +27,9 @@ class StopPoint:
             if is_crowded is not None:
                 result_url += '&includeCrowdingData={}'.format(is_crowded)
             result = requests.get(result_url)
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -53,6 +56,9 @@ class StopPoint:
             result = requests.get('{}StopPoint/{}/placeTypes?placeTypes={}&{}&{}'.format(Settings.ApiUrl, stop_id,
                                                                                          place_type, Settings.appid,
                                                                                          Settings.appkey))
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -82,6 +88,9 @@ class StopPoint:
                                                                                          line_id, direction,
                                                                                          Settings.appid,
                                                                                          Settings.appkey))
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -107,6 +116,9 @@ class StopPoint:
                 return Response("The given argument was None", 422)
             result = requests.get('{}StopPoint/Type/{}?{}&{}'.format(Settings.ApiUrl, stop_type, Settings.appid,
                                                                      Settings.appkey))
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -138,6 +150,9 @@ class StopPoint:
             if service_mode is not None:
                 result_url += '&modes={}'.format(service_mode)
             result = requests.get(result_url)
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -162,6 +177,9 @@ class StopPoint:
                 return Response("The given stop id is None", 422)
             result = requests.get('{}StopPoint/{}/Arrivals?{}&{}'.format(Settings.ApiUrl, stop_id, Settings.appid,
                                                                          Settings.appkey))
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -191,6 +209,9 @@ class StopPoint:
             if service is not None:
                 result_url += '&serviceTypes={}'.format(service)
             result = requests.get(result_url)
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -218,6 +239,9 @@ class StopPoint:
             if service_type is not None:
                 result_url += '&serviceTypes={}'.format(service_type)
             result = requests.get(result_url)
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -244,6 +268,9 @@ class StopPoint:
                 include_blocked = True
             result = requests.get('{}StopPoint/Mode/{}/Disruption?includeRouteBlockedStops={}&{}&{}'
                                   .format(Settings.ApiUrl, mode, include_blocked, Settings.appid, Settings.appkey))
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -282,6 +309,9 @@ class StopPoint:
             if flatten_response is not None:
                 result_url += '&flattenResponse={}'.format(flatten_response)
             result = requests.get(result_url)
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -322,6 +352,9 @@ class StopPoint:
             if modes is not None:
                 result_url += '&modes={}'.format(modes)
             result = requests.get(result_url)
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -350,6 +383,9 @@ class StopPoint:
                 page = 1
             result = requests.get('{}StopPoint/Mode/{}?page={}&{}&{}'.format(Settings.ApiUrl, mode, page,
                                                                              Settings.appid, Settings.appkey))
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -395,6 +431,9 @@ class StopPoint:
             if lines is not None:
                 result_url += '&lines={}'.format(lines)
             result = requests.get(result_url)
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)
@@ -418,6 +457,9 @@ class StopPoint:
                 return Response("The given stop id was None", 422)
             result = requests.get('{}StopPoint/{}/CarParks?{}&{}'.format(Settings.ApiUrl, stop_id, Settings.appid,
                                                                          Settings.appkey))
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
                                             request.remote_addr)

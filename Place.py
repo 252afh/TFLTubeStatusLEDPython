@@ -1,6 +1,7 @@
 import requests
-from flask import jsonify, current_app, Response
+from flask import jsonify, current_app, Response, request
 from Settings import Settings
+from DatabaseAccess import DatabaseAccess
 
 
 class Place:
@@ -19,12 +20,19 @@ class Place:
 
         with current_app.app_context():
             if place_type is None:
+                DatabaseAccess.insert_error('place_type must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("The given place type was empty", 422)
             result_url = '{}Place/Type/{}?{}&{}'.format(Settings.ApiUrl, place_type, Settings.appid, Settings.appkey)
             if active_only is not None:
                 result_url += '&activeOnly={}'.format(active_only)
             result = requests.get(result_url)
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
+                DatabaseAccess.insert_error('response must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("No result could be found", 422)
             return jsonify(result.text)
 
@@ -42,12 +50,19 @@ class Place:
 
         with current_app.app_context():
             if place_id is None:
+                DatabaseAccess.insert_error('place_id must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("The given place id was empty", 422)
             result_url = '{}Place/{}?{}&{}'.format(Settings.ApiUrl, place_id, Settings.appid, Settings.appkey)
             if include_children is not None:
                 result_url += '&includeChildren={}'.format(include_children)
             result = requests.get(result_url)
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
+                DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("No result could be found", 422)
             return jsonify(result.text)
 
@@ -74,6 +89,8 @@ class Place:
         with current_app.app_context():
             if south_west_latitude is None or south_west_longitude is None or north_east_latitude is None\
                     or north_east_longitude is None:
+                DatabaseAccess.insert_error('location information must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("A given latitude or longitude was empty", 422)
             result_url = '{}Place?swLat={}&swLon={}&neLat={}&neLon={}&{}&{}'.format(Settings.ApiUrl,
                                                                                     south_west_latitude,
@@ -91,7 +108,12 @@ class Place:
                 result_url += '&activeOnly={}'.format(active_only)
             print('request url = {}'.format(result_url))
             result = requests.get(result_url)
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
+                DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("No result could be found", 422)
             return jsonify(result.text)
 
@@ -108,10 +130,17 @@ class Place:
         """
         with current_app.app_context():
             if place_name is None or place_type is None:
+                DatabaseAccess.insert_error('place_type or place_name must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("A given value was None", 422)
             result = requests.get('{}Place/Search?name={}&types={}&{}&{}'.format(Settings.ApiUrl, place_name,
                                                                                  place_type, Settings.appid,
                                                                                  Settings.appkey))
+            if result.status_code != 200:
+                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
+                                            request.remote_addr).format(result.status_code)
             if result is None or result == []:
+                DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
+                                            request.remote_addr)
                 return Response("No result could be found", 422)
             return jsonify(result.text)
