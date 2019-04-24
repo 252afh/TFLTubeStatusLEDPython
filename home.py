@@ -10,6 +10,7 @@ from DatabaseAccess import DatabaseAccess
 from flask import Flask, request, Response, render_template
 from flask_sslify import SSLify
 import pygal
+import pdb
 
 app = Flask(__name__)
 sslify = SSLify(app)
@@ -25,8 +26,8 @@ def get_all_line_status():
     """
 
     result = Line.get_line_status()
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getLinesById', methods=['GET'])
@@ -45,8 +46,8 @@ def get_lines_by_id():
                                     request.remote_addr)
         return Response("The given Id was not a string", 422)
     result = Line.get_line_by_id(line_id)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getByMode', methods=['GET'])
@@ -65,8 +66,8 @@ def get_line_by_mode():
                                     request.remote_addr)
         return Response("The given mode was not a string", 422)
     result = Line.get_lines_by_mode(mode)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getByServiceAndId', methods=['GET'])
@@ -95,8 +96,8 @@ def get_line_by_service_and_id():
                                     request.remote_addr)
         return Response("The given service was not a string", 422)
     result = Line.get_line_by_id_and_service(line_id, service)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getLineByDateAndId', methods=['GET'])
@@ -121,8 +122,9 @@ def get_line_by_date_and_id():
             .format(type(line_id), type(start), type(end)), 422, request.url, request.remote_addr)
         return Response("Parameters must be string", 422)
     result = Line.get_line_info_by_date_and_id(line_id, start, end, "true")
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    pdb.set_trace()
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getLineStatusById', methods=['GET'])
@@ -142,8 +144,8 @@ def get_status_by_id():
                                     request.remote_addr)
         return Response("The id must be of type string", 422)
     result = Line.get_line_status_by_id(line_id, "true")
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getLineBySeverity', methods=['GET'])
@@ -162,8 +164,8 @@ def get_line_by_severity():
                                     request.remote_addr)
         return Response("Severity code must be of type string", 422)
     result = Line.get_lines_by_severity_code(severity)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getLineStatusByMode', methods=['GET'])
@@ -183,8 +185,8 @@ def get_line_status_by_modes():
                                     request.remote_addr)
         return Response("Mode must be of type string", 422)
     result = Line.get_line_status_by_mode(mode, "true")
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getStationsOnLineById', methods=['GET'])
@@ -204,8 +206,8 @@ def get_stations_on_line_by_id():
                                     request.remote_addr)
         return Response("The given id must be of type string", 422)
     result = Line.get_stations_on_line(line_id, "false")
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getSequenceOfStopsOnRoute', methods=['GET'])
@@ -233,8 +235,8 @@ def get_sequence_of_stops_on_route():
     if service_types != "Regular" and service_types != "Night":
         service_types = "Regular"
     result = Line.get_sequence_on_route(line_id, direction, service_types, "false")
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getTimetableForStationOnLine', methods=['GET'])
@@ -257,8 +259,8 @@ def get_timetable_for_station_on_line_by_station_id_line_id():
             request.url, request.remote_addr)
         return Response("The station id and line id must be of type string", 422)
     result = Line.get_timetable_for_station_on_line(stationid, lineid)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getTimetableForJouneyBySourceIdDestIdLineId', methods=['GET'])
@@ -283,8 +285,8 @@ def get_timetable_for_jouney_by_source_id_dest_id_line_id():
             .format(type(source_id), type(dest_id), type(line_id)), 422, request.url, request.remote_addr)
         return Response("The source id, destination id and line id must be of type string", 422)
     result = Line.get_timetable_for_journey(source_id, dest_id, line_id)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getDisruptionsByLineId', methods=['GET'])
@@ -303,8 +305,8 @@ def get_disruptions_by_line_id():
                                     request.remote_addr)
         return Response("The given line id must be of type string", 422)
     result = Line.get_disruptions_for_given_line(line_id)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getDisruptionsByMode', methods=['GET'])
@@ -323,8 +325,8 @@ def get_disruptions_by_mode():
                                     request.remote_addr)
         return Response("The given mode must be of type string", 422)
     result = Line.get_disruptions_for_given_mode(mode)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Line/getArrivalsForLineAndStop', methods=['GET'])
@@ -372,8 +374,8 @@ def get_arrivals_for_line_and_station():
                                         422, request.url, request.remote_addr)
             return Response("The given direction must be: outbound, inbound or all", 422)
     result = Line.get_arrivals_for_line_and_stop(lineid, source, dest, direction)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Bike/getBikePoints', methods=['GET'])
@@ -386,8 +388,8 @@ def get_all_bike_points():
     """
 
     result = BikePoint.get_bike_points()
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Bike/getBikePointById', methods=['GET'])
@@ -406,8 +408,8 @@ def get_bike_points_by_id():
                                     request.remote_addr)
         return Response("The given id must be of type string", 422)
     result = BikePoint.get_bike_point_by_id(bike_point_id)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Bike/getBikePointByQuery', methods=['GET'])
@@ -426,8 +428,8 @@ def get_bike_points_by_query():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = BikePoint.get_bike_point_by_query(query)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Occupancy/getCarParkById', methods=['GET'])
@@ -446,8 +448,8 @@ def get_car_park_by_id():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = Occupancy.get_car_park_occupancy_by_id(car_park_id)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Occupancy/getCarParks', methods=['GET'])
@@ -460,8 +462,8 @@ def get_car_parks():
     """
 
     result = Occupancy.get_car_park_occupancy()
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Occupancy/getChargeById', methods=['GET'])
@@ -480,8 +482,8 @@ def get_charge_by_id():
                                     .format(type(charge_connector_id)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = Occupancy.get_charge_connector_by_id(charge_connector_id)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Occupancy/getAllChargeConnectors', methods=['GET'])
@@ -494,8 +496,8 @@ def get_all_charge_connectors():
         """
 
     result = Occupancy.get_all_charge_point_occupancy()
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Occupancy/getBikePointById', methods=['GET'])
@@ -514,8 +516,8 @@ def get_connector_by_id():
                                     .format(type(charge_connector_id)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = Occupancy.get_bike_point_occupancy_by_id(charge_connector_id)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Place/GetPlaceByTypeAndStatus', methods=['GET'])
@@ -539,8 +541,8 @@ def get_place_by_type_and_status():
             422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = Place.get_places_by_type_and_status(place_type, active_only)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Place/GetPlaceById', methods=['GET'])
@@ -560,8 +562,8 @@ def get_places_by_id():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = Place.get_place_by_id(place_id, "true")
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Place/GetPlaceByBounds', methods=['GET'])
@@ -611,8 +613,8 @@ def get_places_by_bounds():
         return Response("The query must be of type string", 422)
     result = Place.get_places_by_bounding_box(categories, include_children, place_type, active_only, south_west_latitude,
                                               south_west_longitude, north_east_latitude, north_east_longitude)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Place/GetPlaceByName', methods=['GET'])
@@ -637,8 +639,8 @@ def get_places_by_name():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = Place.get_place_by_name(name, place_type)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetStopPointById', methods=['GET'])
@@ -663,8 +665,8 @@ def get_stop_point_info_by_id():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.get_stop_point_by_id(stop_point_id, crowded)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetStopPointByIdAndType', methods=['GET'])
@@ -687,8 +689,8 @@ def get_stop_point_info_by_id_and_type():
             422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.get_stop_point_by_id_and_type(stop_id, place_type)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetCrowdingByStopLineDirection', methods=['GET'])
@@ -718,8 +720,8 @@ def get_crowding_by_stop_line_direction():
         return Response("The query must be of type string", 422)
 
     result = StopPoint.get_crowding_by_id_and_line_and_direction(stop_id, line_id, direction)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetStopByType', methods=['GET'])
@@ -739,8 +741,8 @@ def get_stop_by_type():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.get_stops_of_type(stop_type)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetServicesForStop', methods=['GET'])
@@ -769,8 +771,8 @@ def get_services_for_stop_point():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.get_services_for_stop(stop_id, line_id, mode)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetArrivalsForStop', methods=['GET'])
@@ -789,8 +791,8 @@ def get_arrivals_for_stop_point():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.get_arrivals_by_stop_id(stop_id)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetStopsOnLineFromStop', methods=['GET'])
@@ -822,8 +824,8 @@ def get_stops_on_line_from_stop():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.get_stops_from_station_and_line(stop_id, line_id, service_type)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetRouteSectionsFromStop', methods=['GET'])
@@ -848,8 +850,8 @@ def get_route_sections_from_stop():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.get_route_sections_for_stop_point(stop_id, service_type)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetDisruptionsForMode', methods=['GET'])
@@ -873,8 +875,8 @@ def get_disruptions_on_mode():
                                     request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.get_disruptions_for_mode(service_mode, include_blocked)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetDisruptionsForStopPoint', methods=['GET'])
@@ -912,8 +914,8 @@ def get_disruptions_for_stop_point():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.get_disruptions_for_stop(stop_id, get_family, include_blocked, flatten)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetStopsWithinRadius', methods=['GET'])
@@ -955,8 +957,8 @@ def get_stops_within_radius():
             .format(type(stop_type), type(lat), type(lon)), 422, request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.get_stop_points_within_radius(stop_type, radius, mode, categories, include_lines, lat, lon)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetStopsByMode', methods=['GET'])
@@ -982,8 +984,8 @@ def get_stops_by_mode():
                                     request.url, request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.get_all_stops_by_mode(service_mode, page)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetStopPointsByQuery', methods=['GET'])
@@ -1027,8 +1029,8 @@ def get_stops_by_query():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.search_stop_points_by_query(query, modes, fares_only, results, lines, include_hubs, tfl_only)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/StopPoint/GetCarParksAtStopPoint', methods=['GET'])
@@ -1045,8 +1047,8 @@ def get_car_parks_at_stop():
                                     request.remote_addr)
         return Response("The query must be of type string", 422)
     result = StopPoint.get_car_parks_at_stop_point(stop_id)
-    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, result.json)
-    return result
+    DatabaseAccess.insert_request(request.url, request.method, request.remote_addr, None if result is None else result.json)
+    return Response("Result was None", 422) if result is None else result
 
 
 @app.route('/Diagnostic')
