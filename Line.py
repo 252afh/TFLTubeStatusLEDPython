@@ -48,8 +48,8 @@ class Line:
                 return Response("The supplied Id is empty", 422)
             result = requests.get('{}Line/{}?{}&{}'.format(Settings.ApiUrl, line_id, Settings.appid, Settings.appkey))
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -76,8 +76,8 @@ class Line:
                 return Response("The supplied mode is empty", 422)
             result = requests.get('{}Line/Mode/{}?{}&{}'.format(Settings.ApiUrl, mode, Settings.appid, Settings.appkey))
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -109,8 +109,8 @@ class Line:
                 request_url += '&serviceTypes={}'.format(service)
             result = requests.get(request_url)
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -152,8 +152,8 @@ class Line:
                 request_url += '&detail={}'.format(detail)
             result = requests.get(request_url)
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -184,8 +184,8 @@ class Line:
                 request_url += '&detail={}'.format(detail)
             result = requests.get(request_url)
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -213,8 +213,8 @@ class Line:
             result = requests.get('{}Line/Status/{}?{}&{}'.format(Settings.ApiUrl, severity_code, Settings.appid,
                                                                   Settings.appkey))
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -246,8 +246,8 @@ class Line:
                 request_url += '&detail={}'.format(detail)
             result = requests.get(request_url)
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -279,8 +279,8 @@ class Line:
                 request_url += '&tflOperatedNationalRailStationsOnly={}'.format(tfl_only)
             result = requests.get(request_url)
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -314,8 +314,8 @@ class Line:
                 .format(Settings.ApiUrl, line_id, direction, types, exclude_crowding, Settings.appid, Settings.appkey)
             result = requests.get(request_url)
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -349,8 +349,8 @@ class Line:
             result = requests.get('{}Line/{}/Timetable/{}?{}&{}'
                                   .format(Settings.ApiUrl, line_id, station_id, Settings.appid, Settings.appkey))
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -389,8 +389,8 @@ class Line:
                                   .format(Settings.ApiUrl, line_id, source_id, destination_id, Settings.appid,
                                           Settings.appkey))
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -418,8 +418,8 @@ class Line:
             result = requests.get('{}Line/{}/Disruption?{}&{}'.format(Settings.ApiUrl, line_id, Settings.appid,
                                                                       Settings.appkey))
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -447,8 +447,8 @@ class Line:
             result = requests.get('{}Line/Mode/{}/Disruption?{}&{}'.format(Settings.ApiUrl, mode, Settings.appid,
                                                                            Settings.appkey))
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -490,8 +490,8 @@ class Line:
                 result_url += '&destinationStationId={}'.format(destination_id)
             result = requests.get(result_url)
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,

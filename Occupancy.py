@@ -25,8 +25,8 @@ class Occupancy:
             result = requests.get('{}Occupancy/CarPark/{}?{}&{}'.format(Settings.ApiUrl, car_park_id, Settings.appid,
                                                                         Settings.appkey))
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -49,8 +49,8 @@ class Occupancy:
             result = requests.get(
                 '{}Occupancy/CarPark/?{}&{}'.format(Settings.ApiUrl, Settings.appid, Settings.appkey))
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -77,8 +77,8 @@ class Occupancy:
             result = requests.get('{}Occupancy/ChargeConnector/{}?{}&{}'.format(Settings.ApiUrl, connector_id,
                                                                                 Settings.appid, Settings.appkey))
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -99,8 +99,8 @@ class Occupancy:
             result = requests.get('{}Occupancy/ChargeConnector/?{}&{}'.format(Settings.ApiUrl, Settings.appid,
                                                                               Settings.appkey))
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
@@ -127,8 +127,8 @@ class Occupancy:
             result = requests.get('{}Occupancy/BikePoints/{}?{}&{}'.format(Settings.ApiUrl, bike_point_id,
                                                                            Settings.appid, Settings.appkey))
             if result.status_code != 200:
-                DatabaseAccess.insert_error('status code was {}', result.status_code, request.url,
-                                            request.remote_addr).format(result.status_code)
+                DatabaseAccess.insert_error('status code was {}'.format(result.status_code), result.status_code, request.url,
+                                            request.remote_addr)
                 return None
             if result is None or result == []:
                 DatabaseAccess.insert_error('result must not be None, value was None', 422, request.url,
