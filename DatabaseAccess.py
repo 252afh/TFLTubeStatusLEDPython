@@ -69,7 +69,7 @@ class DatabaseAccess:
         Retrieves the 5 most recent errors
         :return: An array containing the rows returned by the SQL statement
         """
-        statement = "SELECT * FROM Errors"
+        statement = "SELECT * FROM Errors ORDER BY CalledDate DESC LIMIT 5"
         Settings.cursor.execute(statement)
         return Settings.cursor.fetchall()
 
