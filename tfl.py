@@ -1,17 +1,9 @@
-import imp
 import RPi.GPIO as GPIO
 import smbus
 import requests
-import json
 import time
-from time import sleep
 
 try:
-
-    LEDVal = 0
-    LEDValB = 0
-    LEDSecondVal = 0
-    LEDSecondValB = 0
 
     bus = smbus.SMBus(1)
 
@@ -69,6 +61,7 @@ try:
             self.lineSeverity = lineSeverity
             self.redPin = redPin
             self.greenPin = greenPin
+            self.bluePin = bluePin
 
     Bakerloo = line("Bakerloo", 0, 4, 17, 27)
     Central = line("Central", 0, 18, 23, 24)
@@ -94,7 +87,24 @@ try:
     MCPSecondList = [Piccadilly]
     MCPSecondListB = [DLR]
 
+    # Severity codes
+
+    # 9 = minor delays
+    # 8 = bus service
+    # 7 = reduced service
+    # 6 = severe delays
+    # 5 = part closure
+
+    # 10 = good service
+
+    # 20 = service closed
+
     while True:
+        LEDVal = 0
+        LEDValB = 0
+        LEDSecondVal = 0
+        LEDSecondValB = 0
+
         result = getLineStatus()
         for val in result:
             for r in lineList:
@@ -105,7 +115,7 @@ try:
                             GPIO.output(r.greenPin, GPIO.HIGH)
                             GPIO.output(r.redPin, GPIO.LOW)
                             print(r.name + "'s LED is green")
-                        elif r.lineSeverity <= 9 and r.lineSeverity >= 5:
+                        elif 9 >= r.lineSeverity >= 5:
                             GPIO.output(r.greenPin, GPIO.HIGH)
                             GPIO.output(r.redPin, GPIO.HIGH)
                             print(r.name + "'s LED is red and green")
@@ -124,7 +134,7 @@ try:
                         if l.lineSeverity == 10:
                             LEDVal += l.greenPin
                             print(l.name + "'s LED is green")
-                        elif l.lineSeverity <= 9 and l.lineSeverity >= 5:
+                        elif 9 >= l.lineSeverity >= 5:
                             LEDVal += l.greenPin
                             LEDVal += l.redPin
                             print(l.name + "'s LED is red and green")
@@ -138,7 +148,7 @@ try:
                         if l.lineSeverity == 10:
                             LEDValB += l.greenPin
                             print(l.name + "'s LED is green")
-                        elif l.lineSeverity <= 9 and l.lineSeverity >= 5:
+                        elif 9 >= l.lineSeverity >= 5:
                             LEDValB += l.greenPin
                             LEDValB += l.redPin
                             print(l.name + "'s LED is red and green")
@@ -152,13 +162,16 @@ try:
                         if s.lineSeverity == 10:
                             LEDSecondVal += s.greenPin
                             print(s.name + "'s LED is green")
-                        elif s.lineSeverity <= 9 and s.lineSeverity >= 5:
+                        elif 9 >= s.lineSeverity >= 5:
                             LEDSecondVal += s.greenPin
                             LEDSecondVal += s.redPin
                             print(s.name + "'s LED is red and green")
                         elif s.lineSeverity == 20:
                             LEDSecondVal += s.redPin
                             print(s.name + "'s LED is red")
+                        else:
+                            LEDSecondVal += s.redPin
+                            print(s.name + "'s LED defaulted to red")
             for s in MCPSecondListB:
                 if val['name'] == s.name:
                     for severity in val['lineStatuses']:
@@ -166,13 +179,16 @@ try:
                         if s.lineSeverity == 10:
                             LEDSecondValB += s.greenPin
                             print(s.name + "'s LED is green")
-                        elif s.lineSeverity <= 9 and s.lineSeverity >= 5:
+                        elif 9 >= s.lineSeverity >= 5:
                             LEDSecondValB += s.greenPin
                             LEDSecondValB += s.redPin
                             print(s.name + "'s LED is red and green")
                         elif s.lineSeverity == 20:
                             LEDSecondValB += s.redPin
                             print(s.name + "'s LED is red")
+                        else:
+                            LEDSecondValB += s.redPin
+                            print(s.name + "'s LED defaulted to red")
 
         bus.write_byte_data(DEVICE, OLATA, LEDVal)
         bus.write_byte_data(DEVICE, OLATB, LEDValB)
@@ -181,14 +197,9 @@ try:
         time.sleep(300)
 
 except BaseException:
+    import sys
     e = sys.exc_info()[0]
     print("<p>Error: %s</p>" % e)
 
 finally:
-    #try:
-        #GPIO.cleanup()
-        #bus.write_byte_data(DEVICE, OLATA, 0)
-        #bus.write_byte_data(SECONDDEVICE, OLATB, 0)
-    #except:
-       # print("Error cleaning up")
     print("Execution finished")
